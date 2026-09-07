@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Order Confirmation</title></head>
+<body>
+  <h2>Thank you, {{customer_name}}!</h2>
+  <p>We received your order <strong>{{order_number}}</strong> placed on {{order_date}}.</p>
+  <p>Order total: <strong>{{order_total}}</strong></p>
+  <p>We'll notify you when your order ships.</p>
+  <p>Order details:</p>
+  <pre>{{order_items}}</pre>
+  <p>Thanks for shopping with {{site_name}}.</p>
+  {{social_links}}
+</body>
+</html>

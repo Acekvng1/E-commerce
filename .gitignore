@@ -1,0 +1,35 @@
+# Database dumps and local database files
+Citadb.sql
+*.sql
+*.sqlite
+*.sqlite3
+
+# Environment files and local secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Logs, temporary files, and backups
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+
+# Local tooling and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependency and build output directories
+node_modules/
+dist/
+build/
+coverage/
