@@ -53,20 +53,59 @@ if (reviewSlider) {
   restartReviewTimer();
 }
 
-// Receipt Handling
+// Receipt & Order Sync to Admin Dashboard
 function openReceipt() {
   if (!cart.length) {
     showToast('Add an item before printing a receipt.');
     return;
   }
   const now = new Date();
-  $('#receipt-order-number').textContent = `Order #CF-${String(now.getTime()).slice(-6)}`;
-  $('#receipt-date').textContent = now.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+  const orderNum = `CF-${String(now.getTime()).slice(-6)}`;
+  const orderDate = now.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  $('#receipt-order-number').textContent = `Order #${orderNum}`;
+  $('#receipt-date').textContent = orderDate;
   $('#receipt-lines').innerHTML = cart.map(item => `<div class="receipt-line"><span>${item.qty} x ${item.name}</span><strong>${money(item.price * item.qty)}</strong></div>`).join('');
-  $('#receipt-total').textContent = money(cart.reduce((sum, item) => sum + item.price * item.qty, 0));
+  $('#receipt-total').textContent = money(subtotal);
   $('#cart-drawer').classList.remove('open');
   $('#drawer-backdrop').hidden = true;
   $('#receipt-backdrop').hidden = false;
+
+  // Persist live order to Admin storage
+  try {
+    const adminOrders = JSON.parse(localStorage.getItem('citas_admin_orders') || '[]');
+    const newOrder = {
+      id: orderNum,
+      date: orderDate,
+      customer: { name: 'Storefront Guest', email: 'guest@citasfunhouse.com', phone: '+233 24 000 0000' },
+      address: 'In-store Pickup Studio, Accra',
+      method: 'In-store Pickup',
+      items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+      subtotal: subtotal,
+      shipping: 0,
+      total: subtotal,
+      status: 'pending'
+    };
+    adminOrders.unshift(newOrder);
+    localStorage.setItem('citas_admin_orders', JSON.stringify(adminOrders));
+
+    // Deduct stock in admin products
+    const adminProducts = JSON.parse(localStorage.getItem('citas_admin_products') || '[]');
+    if (Array.isArray(adminProducts) && adminProducts.length) {
+      cart.forEach(cartItem => {
+        const prod = adminProducts.find(p => p.id === cartItem.id || p.name === cartItem.name);
+        if (prod && prod.stock > 0) {
+          prod.stock = Math.max(0, prod.stock - cartItem.qty);
+        }
+      });
+      localStorage.setItem('citas_admin_products', JSON.stringify(adminProducts));
+      // Refresh products array
+      products = getStoreProducts();
+    }
+  } catch (err) {
+    console.warn('Could not sync order to admin storage', err);
+  }
 }
 
 document.querySelector('[data-action="checkout"]')?.addEventListener('click', openReceipt);
@@ -79,7 +118,7 @@ document.querySelector('[data-action="toggle-menu"]')?.addEventListener('click',
 });
 
 // Products & Store State
-const products = [
+const defaultProducts = [
   { id: 1, name: 'Everyday resistance band', category: 'Fitness', price: 18, image: 'assets/images/prod_1_1769168283.webp', description: 'A quietly powerful addition to your movement routine.', badge: 'Best seller' },
   { id: 2, name: 'The reset kit', category: 'Wellness', price: 32, image: 'assets/images/prod_2_1769171281.webp', description: 'Your small, satisfying pause in a box.' },
   { id: 3, name: 'Cloud nine body oil', category: 'Care', price: 24, image: 'assets/images/prod_3_1770907729.jpg', description: 'A lightweight daily ritual for soft, happy skin.' },
@@ -92,6 +131,18 @@ const products = [
   { id: 10, name: 'Organic cotton play mat', category: 'Kids', price: 34, image: 'assets/images/categories/cat_1771172874_547cf9a8.jpeg', description: 'Soft, safe padding for little adventures.', badge: 'New' }
 ];
 
+function getStoreProducts() {
+  try {
+    const saved = localStorage.getItem('citas_admin_products');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length) return parsed;
+    }
+  } catch (e) {}
+  return defaultProducts;
+}
+
+let products = getStoreProducts();
 let activeFilter = 'All';
 let cart = JSON.parse(localStorage.getItem('citas-cart') || '[]');
 
@@ -297,9 +348,6 @@ document.addEventListener('click', event => {
       searchInput.focus();
       searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  }
-  if (action === 'account') {
-    showToast('Account sign-in will be connected in the next release.');
   }
 
   const card = event.target.closest('.product-card');

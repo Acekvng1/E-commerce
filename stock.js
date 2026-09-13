@@ -1,17 +1,28 @@
 (() => {
-  const stockByName = {
-    'Everyday resistance band': 12,
-    'The reset kit': 4,
-    'Cloud nine body oil': 0,
-    'Sunday kitchen set': 7,
-    'Good mood essentials': 2,
-    'The fun little extra': 18,
-    'Move with ease mat': 5,
-    'Clear space starter': 0,
-    'Ceramic incense burner': 8,
-    'Organic cotton play mat': 6
-  };
+  function getStockMap() {
+    try {
+      const adminProds = JSON.parse(localStorage.getItem('citas_admin_products') || 'null');
+      if (Array.isArray(adminProds) && adminProds.length) {
+        const map = {};
+        adminProds.forEach(p => { map[p.name] = p.stock; });
+        return map;
+      }
+    } catch (e) {}
+    return {
+      'Everyday resistance band': 12,
+      'The reset kit': 4,
+      'Cloud nine body oil': 0,
+      'Sunday kitchen set': 7,
+      'Good mood essentials': 2,
+      'The fun little extra': 18,
+      'Move with ease mat': 5,
+      'Clear space starter': 0,
+      'Ceramic incense burner': 8,
+      'Organic cotton play mat': 6
+    };
+  }
 
+  const stockByName = getStockMap();
   window.stockByName = stockByName;
 
   let isUpdating = false;

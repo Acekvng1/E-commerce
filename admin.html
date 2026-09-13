@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cita's Funhouse Admin Dashboard - Inventory, Expiry Tracking, Orders, and Store Management">
+  <title>Cita's Funhouse | Admin Portal & Store Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a class="brand-link" href="admin.html">
+          <span class="brand-mark">cf</span>
+          <span>Cita's <em>Admin</em></span>
+        </a>
+        <span class="portal-badge">PORTAL</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Core Operations</span>
+        <button class="nav-item active" data-view="overview">
+          <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" data-view="orders">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span>Orders</span>
+          <span class="badge-count" id="nav-orders-count">0</span>
+        </button>
+        <button class="nav-item" data-view="inventory">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="m21.12 6.4-9-4a2 2 0 0 0-1.74 0l-9 4A2 2 0 0 0 1 8.2v7.6a2 2 0 0 0 1.12 1.8l9 4a2 2 0 0 0 1.76 0l9-4A2 2 0 0 0 23 15.8V8.2a2 2 0 0 0-1.88-1.8z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>Inventory & Expiry</span>
+          <span class="badge-count urgent" id="nav-alerts-count" hidden>0</span>
+        </button>
+
+        <span class="nav-section-title">Catalog & Store</span>
+        <button class="nav-item" data-view="products">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span>Products</span>
+        </button>
+        <button class="nav-item" data-view="categories">
+          <svg class="nav-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span>Categories</span>
+        </button>
+        <button class="nav-item" data-view="promotions">
+          <svg class="nav-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>Promotions</span>
+        </button>
+
+        <span class="nav-section-title">System</span>
+        <button class="nav-item" data-view="settings">
+          <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Data & Storage</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a class="view-store-link" href="index.html" target="_blank" rel="noopener">
+          <span>View Storefront</span>
+          <span>↗</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" id="menu-toggle" aria-label="Toggle menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="breadcrumb-area">
+            <span>Cita's Admin</span>
+            <span>/</span>
+            <strong id="topbar-title">Dashboard Overview</strong>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="status-pill-live">
+            <span class="dot"></span>
+            <span>Local Sync Active</span>
+          </div>
+
+          <!-- Notification Bell -->
+          <div class="notification-wrapper">
+            <button class="notification-btn" id="notif-btn" aria-label="Notifications">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="notification-badge" id="notif-badge">0</span>
+            </button>
+
+            <!-- Dropdown -->
+            <div class="notification-dropdown" id="notif-dropdown">
+              <div class="dropdown-header">
+                <h4>System Alerts (<span id="notif-count-text">0</span>)</h4>
+                <button class="clear-btn" id="clear-notifs-btn">Mark All Read</button>
+              </div>
+              <ul class="notification-list" id="notif-list"></ul>
+            </div>
+          </div>
+
+          <button class="btn btn-lime btn-sm" id="quick-add-btn">
+            <span>+ Add Product</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Page Content Area -->
+      <main class="page-content">
+        <!-- 1. OVERVIEW VIEW -->
+        <section class="view-section active" id="view-overview">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h1>Store Performance & Operations</h1>
+              <p>Real-time analytics, inventory vigilance, and order status.</p>
+            </div>
+            <div class="header-action-group">
+              <button class="btn btn-secondary btn-sm" data-action="export-data">Backup JSON</button>
+              <button class="btn btn-primary btn-sm" data-action="new-order-demo">+ Simulate Order</button>
+            </div>
+          </div>
+
+          <!-- KPI Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card kpi-revenue">
+              <div class="kpi-card-header">
+                <span class="kpi-label">Gross Revenue</span>
+                <div class="kpi-icon-wrap">GH₵</div>
+              </div>
+              <h2 class="kpi-value" id="kpi-revenue">GH₵0.00</h2>
+              <div class="kpi-subtext">
+                <span class="kpi-trend-up">↑ 14.8%</span>
+                <span>from active customer orders</span>
+              </div>
+            </div>
+
+            <div class="kpi-card kpi-orders">
+              <div class="kpi-card-header">
+                <span class="kpi-label">Orders Pipeline</span>
+                <div class="kpi-icon-wrap">📦</div>
+              </div>
+              <h2 class="kpi-value" id="kpi-orders">0</h2>
+              <div class="kpi-subtext">
+                <span id="kpi-pending-orders">0 pending fulfillment</span>
+              </div>
+            </div>
+
+            <div class="kpi-card kpi-stock">
+              <div class="kpi-card-header">
+                <span class="kpi-label">Low / Out of Stock</span>
+                <div class="kpi-icon-wrap">⚠️</div>
+              </div>
+              <h2 class="kpi-value" id="kpi-stock-alert">0</h2>
+              <div class="kpi-subtext">
+                <span class="kpi-trend-warn" id="kpi-stock-details">0 sold out</span>
+              </div>
+            </div>
+
+            <div class="kpi-card kpi-expiry">
+              <div class="kpi-card-header">
+                <span class="kpi-label">Expiry Alerts</span>
+                <div class="kpi-icon-wrap">⏳</div>
+              </div>
+              <h2 class="kpi-value" id="kpi-expiry-alert">0</h2>
+              <div class="kpi-subtext">
+                <span class="kpi-trend-warn" id="kpi-expiry-details">0 expired items</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Split Section: Recent Orders & Priority Alerts -->
+          <div class="dashboard-split">
+            <!-- Recent Orders -->
+            <div class="card">
+              <div class="card-header">
+                <h3>Recent Customer Orders</h3>
+                <button class="btn btn-secondary btn-sm" data-switch-view="orders">View All ↗</button>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Customer</th>
+                      <th>Items</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="overview-orders-table"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Priority Alerts / Inventory Watch -->
+            <div class="card">
+              <div class="card-header">
+                <h3>Vigilance Feed</h3>
+                <span class="status-pill status-low-stock">Action Needed</span>
+              </div>
+              <div class="card-body" style="padding: 12px 18px;">
+                <ul class="notification-list" id="overview-vigilance-list" style="max-height: 380px;"></ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. ORDERS VIEW -->
+        <section class="view-section" id="view-orders">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h1>Orders Management</h1>
+              <p>Track fulfillment status, view order receipts, and process shipments.</p>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <svg class="search-icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="search" id="orders-search" placeholder="Search order #, customer name, email...">
+            </div>
+            <select class="filter-select" id="orders-status-filter">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="card">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Date & Time</th>
+                    <th>Customer</th>
+                    <th>Method</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. INVENTORY & EXPIRY VIEW -->
+        <section class="view-section" id="view-inventory">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h1>Inventory & Expiry Monitoring</h1>
+              <p>Track current stock counts, batch numbers, days remaining, and expiry warnings.</p>
+            </div>
+            <div class="header-action-group">
+              <button class="btn btn-primary btn-sm" id="btn-add-inventory-item">+ Add Product</button>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <svg class="search-icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="search" id="inventory-search" placeholder="Filter by product name, SKU, or batch...">
+            </div>
+            <select class="filter-select" id="inventory-stock-filter">
+              <option value="all">All Stock Statuses</option>
+              <option value="in-stock">In Stock (>3)</option>
+              <option value="low-stock">Low Stock (≤3)</option>
+              <option value="sold-out">Sold Out (0)</option>
+            </select>
+            <select class="filter-select" id="inventory-expiry-filter">
+              <option value="all">All Expiry States</option>
+              <option value="attention">Needs Attention (Expired or &le;30d)</option>
+              <option value="expired">Expired Only</option>
+              <option value="expiring-soon">Expiring Soon (&le;30 days)</option>
+              <option value="safe">Safe</option>
+            </select>
+          </div>
+
+          <div class="card">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>SKU</th>
+                    <th>Category</th>
+                    <th>Stock Qty</th>
+                    <th>Stock Status</th>
+                    <th>Batch #</th>
+                    <th>Expiry Date</th>
+                    <th>Urgency & Days Left</th>
+                    <th>Quick Restock</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. PRODUCTS VIEW -->
+        <section class="view-section" id="view-products">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h1>Products Catalog</h1>
+              <p>Manage store catalog, prices, descriptions, and storefront badges.</p>
+            </div>
+            <div class="header-action-group">
+              <button class="btn btn-lime" id="btn-add-product">+ Add New Product</button>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <svg class="search-icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="search" id="products-search" placeholder="Search catalog by title, description...">
+            </div>
+            <select class="filter-select" id="products-category-filter">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+
+          <div class="card">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Badge</th>
+                    <th>Expiry Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. CATEGORIES VIEW -->
+        <section class="view-section" id="view-categories">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h1>Product Categories</h1>
+              <p>Organize products into curated collections displayed on the storefront.</p>
+            </div>
+            <div class="header-action-group">
+              <button class="btn btn-lime" id="btn-add-category">+ Add Category</button>
+            </div>
+          </div>
+
+          <div class="categories-admin-grid" id="categories-grid"></div>
+        </section>
+
+        <!-- 6. PROMOTIONS VIEW -->
+        <section class="view-section" id="view-promotions">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h1>Discounts & Promotions</h1>
+              <p>Configure coupon codes, promotional banners, and campaign dates.</p>
+            </div>
+            <div class="header-action-group">
+              <button class="btn btn-lime" id="btn-add-promotion">+ Create Promotion</button>
+            </div>
+          </div>
+
+          <div class="promos-admin-grid" id="promotions-grid"></div>
+        </section>
+
+        <!-- 7. SETTINGS & DATA VIEW -->
+        <section class="view-section" id="view-settings">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h1>Data Management & System Info</h1>
+              <p>Backup store data, import backups, or reset demo database for GitHub Pages testing.</p>
+            </div>
+          </div>
+
+          <div class="dashboard-split">
+            <div class="card">
+              <div class="card-header">
+                <h3>Store Storage Backup</h3>
+              </div>
+              <div class="card-body">
+                <p>All admin products, categories, inventory, and customer orders are stored locally in your browser (HTML5 LocalStorage) for seamless offline and GitHub Pages compatibility.</p>
+                <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+                  <button class="btn btn-primary" data-action="export-data">Download JSON Backup</button>
+                  <label class="btn btn-secondary" style="cursor: pointer;">
+                    Import JSON Backup
+                    <input type="file" id="import-json-input" accept=".json" style="display: none;">
+                  </label>
+                  <button class="btn btn-danger" data-action="reset-demo-data">Reset to Default Demo Data</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Store Information</h3>
+              </div>
+              <div class="card-body">
+                <p><strong>Brand:</strong> Cita's Funhouse</p>
+                <p><strong>Location:</strong> Accra, Ghana</p>
+                <p><strong>Currency:</strong> Ghana Cedis (GH₵)</p>
+                <p><strong>Pickup Hours:</strong> Mon–Sat: 9AM – 8PM | Sun: 10AM – 6PM</p>
+                <p><strong>Hosting Mode:</strong> Client-Side Static (GitHub Pages Ready)</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT PRODUCT -->
+  <div class="modal-overlay" id="modal-product">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-product-title">Add New Product</h3>
+        <button class="modal-close" data-close-modal="modal-product">&times;</button>
+      </div>
+      <form id="form-product">
+        <input type="hidden" id="product-id">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label for="prod-name">Product Name *</label>
+              <input type="text" id="prod-name" required placeholder="e.g. Everyday resistance band">
+            </div>
+
+            <div class="form-group">
+              <label for="prod-sku">SKU Code *</label>
+              <input type="text" id="prod-sku" required placeholder="FIT-001">
+            </div>
+
+            <div class="form-group">
+              <label for="prod-category">Category *</label>
+              <select id="prod-category" required></select>
+            </div>
+
+            <div class="form-group">
+              <label for="prod-price">Price (GH₵) *</label>
+              <input type="number" id="prod-price" min="0" step="0.5" required placeholder="25.00">
+            </div>
+
+            <div class="form-group">
+              <label for="prod-stock">Stock Quantity *</label>
+              <input type="number" id="prod-stock" min="0" step="1" required placeholder="10">
+            </div>
+
+            <div class="form-group">
+              <label for="prod-batch">Batch Number</label>
+              <input type="text" id="prod-batch" placeholder="BCH-2026-08">
+            </div>
+
+            <div class="form-group">
+              <label for="prod-expiry">Expiry Date</label>
+              <input type="date" id="prod-expiry">
+            </div>
+
+            <div class="form-group">
+              <label for="prod-badge">Badge (Optional)</label>
+              <input type="text" id="prod-badge" placeholder="Best seller, New, Popular">
+            </div>
+
+            <div class="form-group">
+              <label for="prod-image">Image URL / Path</label>
+              <input type="text" id="prod-image" placeholder="assets/images/prod_1_1769168283.webp">
+            </div>
+
+            <div class="form-group full">
+              <label>Image Preview</label>
+              <div class="img-preview-box">
+                <img id="prod-preview-img" src="assets/images/prod_1_1769168283.webp" alt="Preview">
+              </div>
+            </div>
+
+            <div class="form-group full">
+              <label for="prod-description">Product Description</label>
+              <textarea id="prod-description" rows="2" placeholder="Brief summary for storefront cards..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-product">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-product">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ORDER DETAILS & FULFILLMENT -->
+  <div class="modal-overlay" id="modal-order">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-order-title">Order Details</h3>
+        <button class="modal-close" data-close-modal="modal-order">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modal-order-details-body"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-print-order-invoice">Print Receipt 🖨️</button>
+        <button type="button" class="btn btn-primary" id="btn-save-order-status">Update Status</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CATEGORY ADD / EDIT -->
+  <div class="modal-overlay" id="modal-category">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-category-title">Add Category</h3>
+        <button class="modal-close" data-close-modal="modal-category">&times;</button>
+      </div>
+      <form id="form-category">
+        <input type="hidden" id="category-id">
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="cat-name">Category Name *</label>
+            <input type="text" id="cat-name" required placeholder="e.g. Wellness">
+          </div>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="cat-tagline">Tagline / Subtitle</label>
+            <input type="text" id="cat-tagline" placeholder="Small rituals, big shifts.">
+          </div>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="cat-image">Image Path</label>
+            <input type="text" id="cat-image" placeholder="assets/images/categories/cat_1771161868_a35ae236.webp">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-category">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PROMOTION ADD / EDIT -->
+  <div class="modal-overlay" id="modal-promotion">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-promotion-title">Create Promotion</h3>
+        <button class="modal-close" data-close-modal="modal-promotion">&times;</button>
+      </div>
+      <form id="form-promotion">
+        <input type="hidden" id="promo-id">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label for="promo-title">Campaign Title *</label>
+              <input type="text" id="promo-title" required placeholder="New Season Rituals">
+            </div>
+            <div class="form-group">
+              <label for="promo-code">Coupon Code *</label>
+              <input type="text" id="promo-code" required placeholder="FUNHOUSE15" style="text-transform: uppercase;">
+            </div>
+            <div class="form-group">
+              <label for="promo-discount">Discount % *</label>
+              <input type="number" id="promo-discount" min="1" max="90" required placeholder="15">
+            </div>
+            <div class="form-group">
+              <label for="promo-start">Start Date</label>
+              <input type="date" id="promo-start">
+            </div>
+            <div class="form-group">
+              <label for="promo-end">End Date</label>
+              <input type="date" id="promo-end">
+            </div>
+            <div class="form-group full">
+              <label for="promo-details">Offer Description</label>
+              <textarea id="promo-details" rows="2" placeholder="Enjoy 15% off across all wellness picks..."></textarea>
+            </div>
+            <div class="form-group full">
+              <label>
+                <input type="checkbox" id="promo-active" checked> Active Promotion
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-promotion">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Campaign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: DELETE CONFIRMATION -->
+  <div class="modal-overlay" id="modal-delete">
+    <div class="modal-card" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+        <button class="modal-close" data-close-modal="modal-delete">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="delete-prompt-text">Are you sure you want to delete this item? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-delete">Cancel</button>
+        <button type="button" class="btn btn-danger" id="btn-confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="admin-toast" id="admin-toast" role="status" aria-live="polite"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
